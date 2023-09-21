@@ -25,18 +25,16 @@
  */
 package jp.mydns.projectk.plugin;
 
-import jp.mydns.projectk.plugin.impl.AbstractPluginException;
-
 /**
- * Indicates that an error occurred while loading plug-in.
+ * Indicates that no found a plug-in.
  *
  * @author riru
  * @version 1.0.0
  * @since 1.0.0
  */
-public class PluginLoadingException extends AbstractPluginException {
+public class NoSuchPluginException extends PluginLoadingException {
 
-    private static final long serialVersionUID = -7490156613235059198L;
+    private static final long serialVersionUID = -3390156613122109198L;
 
     /**
      * Construct with cause reason.
@@ -47,7 +45,7 @@ public class PluginLoadingException extends AbstractPluginException {
      * @throws IllegalArgumentException if {@code reason} is blank
      * @since 1.0.0
      */
-    public PluginLoadingException(String reason) {
+    public NoSuchPluginException(String reason) {
 
         super(reason);
     }
