@@ -25,9 +25,6 @@
  */
 package jp.mydns.projectk.plugin;
 
-import jakarta.json.JsonObject;
-import java.util.Objects;
-
 /**
  * Implements the {@code ExecutablePlugin}.
  *
@@ -37,13 +34,10 @@ import java.util.Objects;
  */
 public class PluginImpl implements ExecutablePlugin {
 
-    private JsonObject props = JsonObject.EMPTY_JSON_OBJECT;
-
     @Override
     public String execute(String arg) {
 
-        return "Argument: %s, About: %s, Version: %s, Property[name]: %s".formatted(
-                arg, getAbout(), getVersion(), getPluginProperties().getString("name"));
+        return "Argument: %s, About: %s, Version: %s".formatted(arg, getAbout(), getVersion());
     }
 
     @Override
@@ -54,15 +48,5 @@ public class PluginImpl implements ExecutablePlugin {
     @Override
     public String getVersion() {
         return "1.0.0";
-    }
-
-    @Override
-    public JsonObject getPluginProperties() {
-        return props;
-    }
-
-    @Override
-    public void setPluginProperties(JsonObject props) {
-        this.props = Objects.requireNonNull(props);
     }
 }

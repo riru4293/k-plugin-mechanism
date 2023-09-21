@@ -25,8 +25,6 @@
  */
 package jp.mydns.projectk.plugin;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import jp.mydns.projectk.plugin.impl.PluginLoaderImpl;
@@ -50,16 +48,13 @@ class PluginExecutionTest {
 
         PluginStorage storage = new PluginStorageImpl(pluginDir);
 
-        JsonObject props = Json.createObjectBuilder().add("name", "Project-K").build();
-
         try (var loader = new PluginLoaderImpl<>(ExecutablePlugin.class, storage)) {
 
             ExecutablePlugin plugin = loader.load("PluginImpl");
-            plugin.setPluginProperties(props);
 
             String result = plugin.execute("hello");
 
-            assertThat(result).isEqualTo("Argument: hello, About: For testing, Version: 1.0.0, Property[name]: Project-K");
+            assertThat(result).isEqualTo("Argument: hello, About: For testing, Version: 1.0.0");
         }
     }
 }

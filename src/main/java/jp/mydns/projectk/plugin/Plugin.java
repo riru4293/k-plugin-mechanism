@@ -25,8 +25,6 @@
  */
 package jp.mydns.projectk.plugin;
 
-import jakarta.json.JsonObject;
-
 /**
  * Plug-in interface.
  * <p>
@@ -66,22 +64,4 @@ public interface Plugin {
      * @since 1.0.0
      */
     String getVersion();
-
-    /**
-     * Get plug-in properties. Used to convey environment-dependent values ​​of the plugin caller to the plugin. Must
-     * not be thrown exception and never return {@code null}.
-     *
-     * @return plug-in properties. It never {@code null}.
-     * @since 1.0.0
-     */
-    JsonObject getPluginProperties();
-
-    /**
-     * Set plug-in properties. This method is used by the plug-in loader.
-     *
-     * @param props properties
-     * @throws NullPointerException if {@code props} is {@code null}
-     * @since 1.0.0
-     */
-    void setPluginProperties(JsonObject props);
 }
