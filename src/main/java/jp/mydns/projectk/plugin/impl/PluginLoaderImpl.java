@@ -25,6 +25,8 @@
  */
 package jp.mydns.projectk.plugin.impl;
 
+import java.lang.System.Logger;
+import static java.lang.System.Logger.Level.*;
 import java.lang.ref.Cleaner;
 import java.lang.reflect.Constructor;
 import java.net.URLClassLoader;
@@ -38,6 +40,7 @@ import java.util.TreeMap;
 import java.util.function.Supplier;
 import static java.util.stream.Collectors.toMap;
 import java.util.stream.Stream;
+import jp.mydns.projectk.plugin.NoSuchPluginException;
 import jp.mydns.projectk.plugin.Plugin;
 import jp.mydns.projectk.plugin.PluginLoader;
 import jp.mydns.projectk.plugin.PluginLoadingException;
@@ -47,12 +50,14 @@ import jp.mydns.projectk.plugin.PluginStorage.PluginResource;
 /**
  * A simple plug-in loading facility.
  *
- * @param <T> Plugin interface type
+ * @param <T> Plug-in interface type
  * @author riru
  * @version 1.0.0
  * @since 1.0.0
  */
 public class PluginLoaderImpl<T extends Plugin> implements PluginLoader<T> {
+
+    private static final Logger LOGGER = System.getLogger(PluginLoaderImpl.class.getName());
 
     static {
         // Note: Provisional response to the problem that "commons-vfs" cannot be unloaded.
@@ -68,7 +73,7 @@ public class PluginLoaderImpl<T extends Plugin> implements PluginLoader<T> {
     private final Cleaner.Cleanable cleanable;
 
     /**
-     * Constructor.
+     * Construct from the {@code PluginStorage}.
      *
      * @param clazz plug-in type
      * @param storage the {@code PluginStorage}
@@ -111,8 +116,9 @@ public class PluginLoaderImpl<T extends Plugin> implements PluginLoader<T> {
     /**
      * {@inheritDoc}
      *
-     * @throws NullPointerException if {@code name} is {@code null}
-     * @throws PluginLoadingException if an exception occurs while plug-in loading
+     * @throws NullPointerException {@inheritDoc}
+     * @throws NoSuchPluginException {@inheritDoc}
+     * @throws PluginLoadingException {@inheritDoc}
      * @since 1.0.0
      */
     @Override
@@ -120,8 +126,10 @@ public class PluginLoaderImpl<T extends Plugin> implements PluginLoader<T> {
 
         Objects.requireNonNull(name);
 
-        return Optional.ofNullable(suppliers.get(name)).map(Supplier::get)
-                .orElseThrow(() -> new PluginLoadingException("Not found plugin [%s].".formatted(name)));
+        return Optional.ofNullable(suppliers.get(name)).orElseThrow(
+                () -> new NoSuchPluginException("No such a plug-in [%s]. Availables are %s."
+                        .formatted(name, suppliers.keySet()))
+        ).get();
     }
 
     /**
@@ -159,7 +167,10 @@ public class PluginLoaderImpl<T extends Plugin> implements PluginLoader<T> {
 
             } catch (ReflectiveOperationException | RuntimeException ignore) {
 
-                throw new PluginLoadingException("Failed load class as plug-in. [%s]".formatted(mainClassName));
+                LOGGER.log(WARNING, "Failed load a plug-in.", ignore);
+
+                throw new PluginLoadingException("Unexpected error occurred while loading the plug-in class. [%s]"
+                        .formatted(mainClassName));
             }
         }
     }

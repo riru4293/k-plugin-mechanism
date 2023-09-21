@@ -33,9 +33,9 @@ import java.util.stream.Stream;
  * Plug-in loader interface. Each plug-in has its own class loader, and the parent class loader is the
  * {@code ContextClassLoader} for the thread in which the plug-in loader is instantiated.
  * <p>
- * The "plug-in" is a single jar file containing the implementation of the {@link Plugin} interface.
- * <p>
- * Implements of plug-in is main class. Identified by a "Main-Class" attribute in the "META-INF/MANIFEST.MF".
+ * The {@code plug-in} is a single jar file containing a single implementation of the {@link Plugin} interface. The
+ * location of a plug-in implementation in a jar file is identified by a {@code Main-Class} attribute in the
+ * {@code META-INF/MANIFEST.MF}.
  *
  * @param <T> Plug-in interface type
  * @author riru
@@ -45,7 +45,7 @@ import java.util.stream.Stream;
 public interface PluginLoader<T extends Plugin> extends AutoCloseable {
 
     /**
-     * Close class loader of all plug-ins loaded by this loader.
+     * Close all class loaders for plug-in loaded by this loader.
      *
      * @since 1.0.0
      */
@@ -53,20 +53,31 @@ public interface PluginLoader<T extends Plugin> extends AutoCloseable {
     void close();
 
     /**
-     * Load a specified plug-in.
+     * Load one plug-in by specified name.
+     * <p>
+     * A plug-in can be unloaded when all of the following three conditions are met. Whether it is actually unloaded or
+     * not depends on the Java VM implementation.
+     * <ol>
+     * <li>The plug-in instance disappears from the heap memory.</li>
+     * <li>There are no threads running static methods of the plug-in.</li>
+     * <li>The instance of the plug-in loader that loaded the plug-in disappears from the heap memory. (Must be closed
+     * the plug-in loader)</li>
+     * </ol>
      *
      * @param name plug-in name. It case insensitive.
      * @return loaded plug-in
      * @throws NullPointerException if {@code name} is {@code null}
-     * @throws PluginLoadingException if an exception occurs while plug-in loading
+     * @throws NoSuchPluginException if no found a plug-in
+     * @throws PluginLoadingException if an error occurs while plug-in loading
      * @since 1.0.0
      */
     T load(String name);
 
     /**
-     * Plug-in supplier entries. Entry key is plug-in name. Supplied all plug-in.
+     * Returns a stream of plug-in suppliers. The stream contains all plug-in known to this plug-in loader instance.
+     * Entry key represents a plug-in name, and entry value is plug-in instance supplier.
      *
-     * @return suppliers. Used {@link #load(java.lang.String)} when supply.
+     * @return plug-in suppliers. Used {@link #load(java.lang.String)} when supply.
      * @since 1.0.0
      */
     Stream<Map.Entry<String, Supplier<T>>> stream();
