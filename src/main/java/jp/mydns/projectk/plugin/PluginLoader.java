@@ -55,8 +55,9 @@ public interface PluginLoader<T extends Plugin> extends AutoCloseable {
     /**
      * Load one plug-in by specified name.
      * <p>
-     * A plug-in can be unloaded when all of the following three conditions are met. Whether it is actually unloaded or
-     * not depends on the Java VM implementation.
+     * A plug-in can be unloaded when all of the following three conditions are met. When a plug-in becomes can unload,
+     * jar file is completely freed and can be modified or deleted. Whether it is actually unloaded or not depends on
+     * the Java VM implementation.
      * <ol>
      * <li>The plug-in instance disappears from the heap memory.</li>
      * <li>There are no threads running static methods of the plug-in.</li>
