@@ -41,12 +41,12 @@ import java.util.stream.Stream;
 public interface PluginStorage {
 
     /**
-     * Returns a stream of {@code PluginResource} contained in this storage.
+     * Returns a stream of {@code PluginLoadingSource}.
      *
-     * @return plug-in resource stream
+     * @return plug-in loading source stream
      * @since 1.0.0
      */
-    Stream<PluginResource> stream();
+    Stream<PluginLoadingSource> stream();
 
     /**
      * Information required to load a single plug-in.
@@ -55,7 +55,7 @@ public interface PluginStorage {
      * @version 1.0.0
      * @since 1.0.0
      */
-    interface PluginResource {
+    interface PluginLoadingSource {
 
         /**
          * Get full class name of plug-in's class.

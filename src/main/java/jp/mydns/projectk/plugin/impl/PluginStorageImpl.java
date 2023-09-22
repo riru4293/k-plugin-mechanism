@@ -53,7 +53,7 @@ public class PluginStorageImpl implements PluginStorage {
 
     private static final Logger LOGGER = System.getLogger(PluginStorageImpl.class.getName());
     ;
-    private final List<PluginResource> resources;
+    private final List<PluginLoadingSource> sources;
 
     /**
      * Construct from plug-in stored directories. Directory is not recursively search, and ignore invalid jar files as
@@ -66,8 +66,8 @@ public class PluginStorageImpl implements PluginStorage {
      */
     public PluginStorageImpl(Path... storages) {
 
-        this.resources = List.of(storages).stream().flatMap(this::toChildren)
-                .filter(p -> p.toString().endsWith(".jar")).flatMap(this::toResource).toList();
+        this.sources = List.of(storages).stream().flatMap(this::toChildren)
+                .filter(p -> p.toString().endsWith(".jar")).flatMap(this::toPluginLoadingSource).toList();
     }
 
     /**
@@ -76,9 +76,9 @@ public class PluginStorageImpl implements PluginStorage {
      * @since 1.0.0
      */
     @Override
-    public Stream<PluginResource> stream() {
+    public Stream<PluginLoadingSource> stream() {
 
-        return resources.stream();
+        return sources.stream();
     }
 
     private Stream<Path> toChildren(Path dir) {
@@ -102,7 +102,7 @@ public class PluginStorageImpl implements PluginStorage {
         }
     }
 
-    private Stream<PluginResource> toResource(Path file) {
+    private Stream<PluginLoadingSource> toPluginLoadingSource(Path file) {
 
         try (var j = new JarFile(file.toFile());) {
 
@@ -113,7 +113,7 @@ public class PluginStorageImpl implements PluginStorage {
                     () -> new NoSuchElementException(
                             "Could not find a valid manifest file as a plug-in within jar file."));
 
-            return Stream.of(new PluginResourceImpl(mainName, file));
+            return Stream.of(new PluginLoadingSourceImpl(mainName, file));
 
         } catch (IOException | RuntimeException ignore) {
 
@@ -123,13 +123,13 @@ public class PluginStorageImpl implements PluginStorage {
         }
     }
 
-    private class PluginResourceImpl implements PluginResource {
+    private class PluginLoadingSourceImpl implements PluginLoadingSource {
 
         private final String mainClassName;
         private final URL mainJar;
         private final URL libraryDirectory;
 
-        PluginResourceImpl(String mainName, Path mainJar) throws MalformedURLException {
+        PluginLoadingSourceImpl(String mainName, Path mainJar) throws MalformedURLException {
 
             this.mainClassName = mainName;
             this.mainJar = mainJar.toUri().toURL();

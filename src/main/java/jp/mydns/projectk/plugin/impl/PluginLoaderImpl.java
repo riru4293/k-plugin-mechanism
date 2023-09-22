@@ -46,7 +46,7 @@ import jp.mydns.projectk.plugin.Plugin;
 import jp.mydns.projectk.plugin.PluginLoader;
 import jp.mydns.projectk.plugin.PluginLoadingException;
 import jp.mydns.projectk.plugin.PluginStorage;
-import jp.mydns.projectk.plugin.PluginStorage.PluginResource;
+import jp.mydns.projectk.plugin.PluginStorage.PluginLoadingSource;
 
 /**
  * A simple plug-in loading facility.
@@ -100,18 +100,18 @@ public class PluginLoaderImpl<T extends Plugin> implements PluginLoader<T> {
         return CLEANER.register(this, new PluginLoaderCloser(loaders));
     }
 
-    private String toPluginName(PluginStorage.PluginResource r) {
+    private String toPluginName(PluginStorage.PluginLoadingSource s) {
 
-        String className = r.getClassName();
+        String className = s.getClassName();
 
         int idx = className.lastIndexOf('.');
 
         return idx > 0 ? className.substring(idx + 1, className.length()) : className;
     }
 
-    private URLClassLoader toURLClassLoader(PluginResource r) {
+    private URLClassLoader toURLClassLoader(PluginLoadingSource s) {
 
-        return new URLClassLoader(r.getClassName(), r.getClassPath(), parent);
+        return new URLClassLoader(s.getClassName(), s.getClassPath(), parent);
     }
 
     /**
