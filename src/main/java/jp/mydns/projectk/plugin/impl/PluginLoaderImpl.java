@@ -31,6 +31,7 @@ import java.lang.ref.Cleaner;
 import java.lang.reflect.Constructor;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -167,10 +168,10 @@ public class PluginLoaderImpl<T extends Plugin> implements PluginLoader<T> {
 
             } catch (ReflectiveOperationException | RuntimeException ignore) {
 
-                LOGGER.log(WARNING, "Failed load a plug-in.", ignore);
+                LOGGER.log(WARNING, "Failed load a plug-in. Class name is %s. Class paths are %s."
+                        .formatted(mainClassName, Arrays.toString(loader.getURLs())), ignore);
 
-                throw new PluginLoadingException("Unexpected error occurred while loading the plug-in class. [%s]"
-                        .formatted(mainClassName));
+                throw new PluginLoadingException("An invalid plug-in was found.");
             }
         }
     }
