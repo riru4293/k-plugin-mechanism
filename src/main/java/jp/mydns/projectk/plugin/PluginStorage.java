@@ -29,7 +29,10 @@ import java.net.URL;
 import java.util.stream.Stream;
 
 /**
- * Logical plugin storage.
+ * Logical plug-in storage.
+ * <p>
+ * <i>What is a "plug-in storage"?</i><br>
+ * A collection of information required to load a single plug-in.
  *
  * @author riru
  * @version 1.0.0
@@ -46,7 +49,7 @@ public interface PluginStorage {
     Stream<PluginResource> stream();
 
     /**
-     * Information needed to load one plugin.
+     * Information required to load a single plug-in.
      *
      * @author riru
      * @version 1.0.0
@@ -55,7 +58,7 @@ public interface PluginStorage {
     interface PluginResource {
 
         /**
-         * Get full class name of plug-in's main class.
+         * Get full class name of plug-in's class.
          *
          * @return class name
          * @since 1.0.0
@@ -63,7 +66,7 @@ public interface PluginStorage {
         String getClassName();
 
         /**
-         * Get class path of plug-in's main class and plug-in's libraries.
+         * Get class path of plug-in's class and plug-in's libraries.
          *
          * @return class paths
          * @since 1.0.0

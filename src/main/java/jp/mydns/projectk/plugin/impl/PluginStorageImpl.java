@@ -26,7 +26,8 @@
 package jp.mydns.projectk.plugin.impl;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
+import java.lang.System.Logger;
+import static java.lang.System.Logger.Level.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -38,6 +39,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.stream.Stream;
+import jp.mydns.projectk.plugin.PluginLoadingException;
 import jp.mydns.projectk.plugin.PluginStorage;
 
 /**
@@ -49,16 +51,17 @@ import jp.mydns.projectk.plugin.PluginStorage;
  */
 public class PluginStorageImpl implements PluginStorage {
 
+    private static final Logger LOGGER = System.getLogger(PluginStorageImpl.class.getName());
+    ;
     private final List<PluginResource> resources;
 
     /**
-     * Construct from storage for the plug-in. "Storage" is a directory where the plug-in jar files are stored. Storage
-     * is not recursively search, and ignore invalid jar files as plug-in. If multiple plug-in files with the same name
-     * exist in storage, the last one found will be used.
+     * Construct from plug-in stored directories. Directory is not recursively search, and ignore invalid jar files as
+     * plug-in. If multiple plug-in files with the same name exist in directories, the last one found will be used.
      *
      * @param storages directories where the plug-in jar files are stored. The one specified later has priority.
      * @throws NullPointerException if {@code storages} is {@code null} or it contains {@code null} element.
-     * @throws UncheckedIOException if occurs an I/O error
+     * @throws PluginLoadingException if occurs unexpected error
      * @since 1.0.0
      */
     public PluginStorageImpl(Path... storages) {
@@ -88,7 +91,9 @@ public class PluginStorageImpl implements PluginStorage {
 
             } catch (IOException ex) {
 
-                throw new UncheckedIOException(ex);
+                LOGGER.log(WARNING, String.format("I/O error occurs when opening the directory. [%s]", dir), ex);
+
+                throw new PluginLoadingException("Occurs an I/O error while searching the plug-in files.");
             }
 
         } else {
@@ -99,16 +104,20 @@ public class PluginStorageImpl implements PluginStorage {
 
     private Stream<PluginResource> toResource(Path file) {
 
-        try (var jf = new JarFile(file.toFile());) {
+        try (var j = new JarFile(file.toFile());) {
 
-            Manifest mf = jf.getManifest();
+            Manifest mf = j.getManifest();
 
             String mainName = Optional.ofNullable(mf).map(Manifest::getMainAttributes)
-                    .map(a -> a.getValue(Attributes.Name.MAIN_CLASS)).orElseThrow();
+                    .map(a -> a.getValue(Attributes.Name.MAIN_CLASS)).orElseThrow(
+                    () -> new NoSuchElementException(
+                            "Could not find a valid manifest file as a plug-in within jar file."));
 
             return Stream.of(new PluginResourceImpl(mainName, file));
 
-        } catch (IOException | NoSuchElementException ignore) {
+        } catch (IOException | RuntimeException ignore) {
+
+            LOGGER.log(DEBUG, String.format("Occurs an error while analysis the jar file as a plug-in.", file), ignore);
 
             return Stream.empty();
         }
