@@ -39,7 +39,7 @@ public class PluginLoadingException extends AbstractPluginException {
     private static final long serialVersionUID = -7490156613235059198L;
 
     /**
-     * Constructor
+     * Construct with cause reason.
      *
      * @param reason reason that caused this exception. Please do not include confidential information as it may be
      * recorded in public logs.

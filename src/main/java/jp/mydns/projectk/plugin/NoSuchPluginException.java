@@ -25,52 +25,28 @@
  */
 package jp.mydns.projectk.plugin;
 
-import java.net.URL;
-import java.util.stream.Stream;
-
 /**
- * Logical plug-in storage.
- * <p>
- * <i>What is a "plug-in storage"?</i><br>
- * A collection of information required to load a single plug-in.
+ * Indicates that no found a plug-in.
  *
  * @author riru
  * @version 1.0.0
  * @since 1.0.0
  */
-public interface PluginStorage {
+public class NoSuchPluginException extends PluginLoadingException {
+
+    private static final long serialVersionUID = -3390156613122109198L;
 
     /**
-     * Returns a stream of {@code PluginLoadingSource}.
+     * Construct with cause reason.
      *
-     * @return plug-in loading source stream
+     * @param reason reason that caused this exception. Please do not include confidential information as it may be
+     * recorded in public logs.
+     * @throws NullPointerException if {@code reason} is {@code null}
+     * @throws IllegalArgumentException if {@code reason} is blank
      * @since 1.0.0
      */
-    Stream<PluginLoadingSource> stream();
+    public NoSuchPluginException(String reason) {
 
-    /**
-     * Information required to load a single plug-in.
-     *
-     * @author riru
-     * @version 1.0.0
-     * @since 1.0.0
-     */
-    interface PluginLoadingSource {
-
-        /**
-         * Get full class name of plug-in's class.
-         *
-         * @return class name
-         * @since 1.0.0
-         */
-        String getClassName();
-
-        /**
-         * Get class path of plug-in's class and plug-in's libraries.
-         *
-         * @return class paths
-         * @since 1.0.0
-         */
-        URL[] getClassPath();
+        super(reason);
     }
 }
