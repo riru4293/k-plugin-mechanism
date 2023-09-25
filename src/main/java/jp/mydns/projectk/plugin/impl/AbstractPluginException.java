@@ -38,8 +38,6 @@ import static java.util.function.Predicate.not;
  */
 public abstract class AbstractPluginException extends RuntimeException {
 
-    private static final long serialVersionUID = -4436065925123933097L;
-
     /**
      * Construct with cause reason.
      *
