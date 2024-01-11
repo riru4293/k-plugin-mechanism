@@ -48,8 +48,7 @@ public abstract class AbstractPluginException extends RuntimeException {
      * @since 1.0.0
      */
     protected AbstractPluginException(String reason) {
-
         super(Optional.of(Objects.requireNonNull(reason)).filter(not(String::isBlank))
-                .orElseThrow(() -> new IllegalArgumentException()));
+                .orElseThrow(() -> new IllegalArgumentException("A reason for the exception is required.")));
     }
 }

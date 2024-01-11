@@ -51,7 +51,7 @@ import jp.mydns.projectk.plugin.PluginStorage.PluginLoadingSource;
 /**
  * A simple plug-in loading facility.
  *
- * @param <T> Plug-in interface type
+ * @param <T> plug-in interface type
  * @author riru
  * @version 1.0.0
  * @since 1.0.0
@@ -89,28 +89,25 @@ public class PluginLoaderImpl<T extends Plugin> implements PluginLoader<T> {
                 toMap(this::toPluginName, this::toURLClassLoader, (first, last) -> last, LinkedHashMap::new));
 
         this.clazz = clazz;
-
         this.cleanable = toCleanable(loaders.values());
-
         loaders.entrySet().stream().forEachOrdered(e -> suppliers.put(e.getKey(), new PluginSupplier(e.getValue())));
+
     }
 
     private Cleaner.Cleanable toCleanable(Collection<URLClassLoader> loaders) {
-
         return CLEANER.register(this, new PluginLoaderCloser(loaders));
     }
 
     private String toPluginName(PluginStorage.PluginLoadingSource s) {
 
         String className = s.getClassName();
-
         int idx = className.lastIndexOf('.');
 
         return idx > 0 ? className.substring(idx + 1, className.length()) : className;
+
     }
 
     private URLClassLoader toURLClassLoader(PluginLoadingSource s) {
-
         return new URLClassLoader(s.getClassName(), s.getClassPath(), parent);
     }
 
@@ -124,13 +121,8 @@ public class PluginLoaderImpl<T extends Plugin> implements PluginLoader<T> {
      */
     @Override
     public T load(String name) {
-
-        Objects.requireNonNull(name);
-
-        return Optional.ofNullable(suppliers.get(name)).orElseThrow(
-                () -> new NoSuchPluginException("No such a plug-in [%s]. Availables are %s."
-                        .formatted(name, suppliers.keySet()))
-        ).get();
+        return Optional.ofNullable(suppliers.get(Objects.requireNonNull(name))).orElseThrow(() -> new NoSuchPluginException(
+                "No such a plug-in [%s]. Availables are %s.".formatted(name, suppliers.keySet()))).get();
     }
 
     /**
@@ -140,7 +132,6 @@ public class PluginLoaderImpl<T extends Plugin> implements PluginLoader<T> {
      */
     @Override
     public Stream<Map.Entry<String, Supplier<T>>> stream() {
-
         return suppliers.entrySet().stream();
     }
 
@@ -150,18 +141,15 @@ public class PluginLoaderImpl<T extends Plugin> implements PluginLoader<T> {
         final URLClassLoader loader;
 
         PluginSupplier(URLClassLoader e) {
-
             this.mainClassName = e.getName();
             this.loader = e;
         }
 
         @Override
         public T get() {
-
             try {
 
                 Class<?> cls = loader.loadClass(mainClassName);
-
                 Constructor<? extends T> constructor = cls.asSubclass(clazz).getConstructor();
 
                 return constructor.newInstance();
@@ -170,8 +158,8 @@ public class PluginLoaderImpl<T extends Plugin> implements PluginLoader<T> {
 
                 LOGGER.log(WARNING, "Failed load a plug-in. Class name is %s. Class paths are %s."
                         .formatted(mainClassName, Arrays.toString(loader.getURLs())), ignore);
-
                 throw new PluginLoadingException("An invalid plug-in was found.");
+
             }
         }
     }
@@ -183,7 +171,6 @@ public class PluginLoaderImpl<T extends Plugin> implements PluginLoader<T> {
      */
     @Override
     public void close() {
-
         cleanable.clean();
     }
 }

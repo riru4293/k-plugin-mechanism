@@ -37,7 +37,7 @@ import java.util.stream.Stream;
  * location of a plug-in implementation in a jar file is identified by a {@code Main-Class} attribute in the
  * {@code META-INF/MANIFEST.MF}.
  *
- * @param <T> Plug-in interface type
+ * @param <T> plug-in interface type
  * @author riru
  * @version 1.0.0
  * @since 1.0.0

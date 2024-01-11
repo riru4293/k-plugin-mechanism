@@ -49,7 +49,6 @@ class PluginLoaderCloser implements Runnable {
      * @since 1.0.0
      */
     public PluginLoaderCloser(Collection<URLClassLoader> loaders) {
-
         this.loaders = List.copyOf(loaders);
     }
 
@@ -62,12 +61,10 @@ class PluginLoaderCloser implements Runnable {
      */
     @Override
     public void run() {
-
         loaders.stream().forEach(this::silentClose);
     }
 
     private void silentClose(URLClassLoader loader) {
-
         try {
             loader.close();
         } catch (IOException ignore) {

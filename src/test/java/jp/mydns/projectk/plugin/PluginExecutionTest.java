@@ -33,7 +33,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 
 /**
- * Load and execute a plug-in.
+ * Test of load and execute a plug-in. Since this project does not have an actual plug-in, a test plug-in was created
+ * using Maven before the test, and the loading and execution of the created plug-in was tested.
  *
  * @author riru
  * @version 1.0.0
@@ -44,14 +45,20 @@ class PluginExecutionTest {
     @Test
     void test() throws URISyntaxException {
 
+        // The Maven phase "process-test-classes" creates the plug-in for testing.
+        // For details, see configuration of the maven-compiler-plugin in "pom.xml".
         Path pluginDir = Path.of(System.getProperties().getProperty("PluginStorage"));
-
         PluginStorage storage = new PluginStorageImpl(pluginDir);
 
+        // Create a plug-in loader with the plug-in's interface type.
         try (var loader = new PluginLoaderImpl<>(ExecutablePlugin.class, storage)) {
 
-            ExecutablePlugin plugin = loader.load("PluginImpl");
+            // Loads a plug-in by plug-in name.
+            // The plug-in name is the main class name indicated in the MANIFEST.MF file in the jar file.
+            // It does not include the package name.
+            ExecutablePlugin plugin = loader.load("ExecutablePlugin$Impl");
 
+            // Run the loaded plug-in and get the results. The specified arguments will be passed to the plug-in.
             String result = plugin.execute("hello");
 
             assertThat(result).isEqualTo("Argument: hello, About: For testing, Version: 1.0.0");
