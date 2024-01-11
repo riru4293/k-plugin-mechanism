@@ -40,8 +40,8 @@ package jp.mydns.projectk.plugin;
  * {@code InterruptedException}.
  * <p>
  * <i>Exception</i><br>
- * All of the {@code Exception} other than the {@link PluginRuntimeException} must not be thrown to outside the plug-in.
- * The only exception is when a thread is interrupted, which must throw the {@link InterruptedException}.
+ * All of the {@code Exception} other than the {@link PluginExecutionException} must not be thrown to outside the
+ * plug-in. The only exception is when a thread is interrupted, which must throw the {@link InterruptedException}.
  *
  * @author riru
  * @version 1.0.0

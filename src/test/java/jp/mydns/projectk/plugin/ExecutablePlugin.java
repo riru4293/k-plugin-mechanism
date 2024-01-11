@@ -26,7 +26,7 @@
 package jp.mydns.projectk.plugin;
 
 /**
- * Plugin interface for testing.
+ * Plug-in interface for testing.
  *
  * @author riru
  * @version 1.0.0
@@ -35,4 +35,30 @@ package jp.mydns.projectk.plugin;
 public interface ExecutablePlugin extends Plugin {
 
     String execute(String arg);
+
+    /**
+     * Implements the {@code ExecutablePlugin}.
+     *
+     * @author riru
+     * @version 1.0.0
+     * @since 1.0.0
+     */
+    class Impl implements ExecutablePlugin {
+
+        @Override
+        public String execute(String arg) {
+
+            return "Argument: %s, About: %s, Version: %s".formatted(arg, getAbout(), getVersion());
+        }
+
+        @Override
+        public String getAbout() {
+            return "For testing";
+        }
+
+        @Override
+        public String getVersion() {
+            return "1.0.0";
+        }
+    }
 }

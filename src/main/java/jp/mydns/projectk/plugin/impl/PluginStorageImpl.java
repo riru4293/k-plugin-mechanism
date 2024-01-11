@@ -52,7 +52,7 @@ import jp.mydns.projectk.plugin.PluginStorage;
 public class PluginStorageImpl implements PluginStorage {
 
     private static final Logger LOGGER = System.getLogger(PluginStorageImpl.class.getName());
-    ;
+    private static final String PLUGINFILE_EXTENTION = ".jar";
     private final List<PluginLoadingSource> sources;
 
     /**
@@ -65,9 +65,8 @@ public class PluginStorageImpl implements PluginStorage {
      * @since 1.0.0
      */
     public PluginStorageImpl(Path... storages) {
-
         this.sources = List.of(storages).stream().flatMap(this::toChildren)
-                .filter(p -> p.toString().endsWith(".jar")).flatMap(this::toPluginLoadingSource).toList();
+                .filter(p -> p.toString().endsWith(PLUGINFILE_EXTENTION)).flatMap(this::toPluginLoadingSource).toList();
     }
 
     /**
@@ -77,7 +76,6 @@ public class PluginStorageImpl implements PluginStorage {
      */
     @Override
     public Stream<PluginLoadingSource> stream() {
-
         return sources.stream();
     }
 
@@ -86,20 +84,18 @@ public class PluginStorageImpl implements PluginStorage {
         if (Files.isDirectory(dir)) {
 
             try (Stream<Path> files = Files.list(dir)) {
-
                 return files.toList().stream();
-
             } catch (IOException ex) {
-
                 LOGGER.log(WARNING, String.format("I/O error occurs when opening the directory. [%s]", dir), ex);
-
                 throw new PluginLoadingException("Occurs an I/O error while searching the plug-in files.");
             }
 
         } else {
 
             return Stream.empty();
+
         }
+
     }
 
     private Stream<PluginLoadingSource> toPluginLoadingSource(Path file) {
@@ -107,19 +103,17 @@ public class PluginStorageImpl implements PluginStorage {
         try (var j = new JarFile(file.toFile());) {
 
             Manifest mf = j.getManifest();
-
             String mainName = Optional.ofNullable(mf).map(Manifest::getMainAttributes)
                     .map(a -> a.getValue(Attributes.Name.MAIN_CLASS)).orElseThrow(
-                    () -> new NoSuchElementException(
-                            "Could not find a valid manifest file as a plug-in within jar file."));
+                    () -> new NoSuchElementException("Could not find a valid manifest file as a plug-in within jar file."));
 
             return Stream.of(new PluginLoadingSourceImpl(mainName, file));
 
         } catch (IOException | RuntimeException ignore) {
 
             LOGGER.log(DEBUG, String.format("Occurs an error while analysis the jar file as a plug-in.", file), ignore);
-
             return Stream.empty();
+
         }
     }
 
@@ -130,7 +124,6 @@ public class PluginStorageImpl implements PluginStorage {
         private final URL libraryDirectory;
 
         PluginLoadingSourceImpl(String mainName, Path mainJar) throws MalformedURLException {
-
             this.mainClassName = mainName;
             this.mainJar = mainJar.toUri().toURL();
             this.libraryDirectory = toLibraryDirectory(mainJar);
@@ -140,20 +133,19 @@ public class PluginStorageImpl implements PluginStorage {
 
             Path parent = mainJar.getParent();
             String name = mainJar.getFileName().toString();
-            String libDirName = name.substring(0, name.length() - ".jar".length());
+            String libDirName = name.substring(0, name.length() - PLUGINFILE_EXTENTION.length());
 
             return parent.resolve(libDirName).toUri().toURL();
+
         }
 
         @Override
         public String getClassName() {
-
             return mainClassName;
         }
 
         @Override
         public URL[] getClassPath() {
-
             return new URL[]{mainJar, libraryDirectory};
         }
     }

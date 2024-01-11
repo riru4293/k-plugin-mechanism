@@ -34,7 +34,7 @@ import jp.mydns.projectk.plugin.impl.AbstractPluginException;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class PluginRuntimeException extends AbstractPluginException {
+public class PluginExecutionException extends AbstractPluginException {
 
     private static final long serialVersionUID = 9085868959670883389L;
 
@@ -47,8 +47,7 @@ public class PluginRuntimeException extends AbstractPluginException {
      * @throws IllegalArgumentException if {@code reason} is blank
      * @since 1.0.0
      */
-    public PluginRuntimeException(String reason) {
-
+    public PluginExecutionException(String reason) {
         super(reason);
     }
 }

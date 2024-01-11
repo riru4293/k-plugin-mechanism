@@ -28,7 +28,7 @@ package jp.mydns.projectk.plugin;
 import jp.mydns.projectk.plugin.impl.AbstractPluginException;
 
 /**
- * Indicates that an error occurred while loading plug-in.
+ * Indicates that failed execute plug-in.
  *
  * @author riru
  * @version 1.0.0
@@ -48,7 +48,6 @@ public class PluginLoadingException extends AbstractPluginException {
      * @since 1.0.0
      */
     public PluginLoadingException(String reason) {
-
         super(reason);
     }
 }

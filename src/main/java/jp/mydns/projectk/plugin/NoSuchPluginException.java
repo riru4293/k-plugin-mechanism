@@ -26,7 +26,7 @@
 package jp.mydns.projectk.plugin;
 
 /**
- * Indicates that no found a plug-in.
+ * Exception that no found a plug-in when load plug-in.
  *
  * @author riru
  * @version 1.0.0
@@ -46,7 +46,6 @@ public class NoSuchPluginException extends PluginLoadingException {
      * @since 1.0.0
      */
     public NoSuchPluginException(String reason) {
-
         super(reason);
     }
 }
