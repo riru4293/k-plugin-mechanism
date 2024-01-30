@@ -53,7 +53,7 @@ import jp.mydns.projectk.plugin.PluginStorage.PluginLoadingSource;
  *
  * @param <T> plug-in interface type
  * @author riru
- * @version 1.0.0
+ * @version 1.1.0
  * @since 1.0.0
  */
 public class PluginLoaderImpl<T extends Plugin> implements PluginLoader<T> {
@@ -172,5 +172,15 @@ public class PluginLoaderImpl<T extends Plugin> implements PluginLoader<T> {
     @Override
     public void close() {
         cleanable.clean();
+    }
+
+    /**
+     * Get plug-in suppliers.
+     *
+     * @return plug-in suppliers. It key is plug-in name.
+     * @since 1.1.0
+     */
+    protected Map<String, Supplier<T>> getSuppliers() {
+        return suppliers;
     }
 }
